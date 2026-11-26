@@ -70,4 +70,12 @@ Formulas: Turnaround = Completion − Arrival, Waiting = Turnaround − Burst, R
 
 ## Test page
 
-`src/App.jsx` is a simple test page for FCFS and Round Robin. The shared UI will replace it.
+`src/App.jsx` is the test page for FCFS and Round Robin:
+
+- **Arrival times** and **Burst times** are typed as lists, e.g. `0 2 4 6` and `5 3 1 2` (spaces or commas).
+  Value *i* of each list becomes process P*i*. Press Enter in any field to run.
+- **Random** fills in 3–6 random processes and runs them. **Load an example** runs a ready-made set (lecture
+  examples, an idle gap, arrivals during a quantum).
+- Errors appear under the field they belong to.
+- After a run, **Play**, **Prev**, **Next** and the slider step through the Gantt chart one block at a time. The
+  results table fills in as each process finishes, and the averages appear at the last step.
