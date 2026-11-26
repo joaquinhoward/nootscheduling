@@ -115,7 +115,10 @@ export default function App() {
             arrival={arrival}
             burst={burst}
             errors={errors}
-            onAlgorithm={edit(setAlgorithm)}
+            onAlgorithm={(id) => {
+              // Clicking the algorithm that is already selected keeps the results.
+              if (id !== algorithm) edit(setAlgorithm)(id)
+            }}
             onQuantum={edit(setQuantum)}
             onArrival={edit(setArrival)}
             onBurst={edit(setBurst)}

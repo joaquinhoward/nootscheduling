@@ -438,6 +438,7 @@ h1 {
 }
 
 .gantt-scroll {
+  position: relative; /* offsetParent for blocks, so offsetLeft is measured inside the scroller */
   overflow-x: auto;
   padding: 0 14px;
 }
