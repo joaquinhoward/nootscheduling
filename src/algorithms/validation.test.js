@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { validateProcesses, validateQuantum } from './validation.js'
+import { splitList, validateLists, validateProcesses, validateQuantum } from './validation.js'
 
 describe('validateProcesses', () => {
   it('parses valid rows, trimming spaces', () => {
@@ -78,5 +78,56 @@ describe('validateQuantum', () => {
     expect(validateQuantum('1.5')).toEqual({ quantum: null, error: 'Time Quantum must be a whole number.' })
     expect(validateQuantum('0')).toEqual({ quantum: null, error: 'Time Quantum must be at least 1.' })
     expect(validateQuantum('-2')).toEqual({ quantum: null, error: 'Time Quantum must be at least 1.' })
+  })
+})
+
+describe('splitList', () => {
+  it('splits on spaces and commas, ignoring extras', () => {
+    expect(splitList(' 0, 2  4,6, ')).toEqual(['0', '2', '4', '6'])
+    expect(splitList('   ')).toEqual([])
+  })
+})
+
+describe('validateLists', () => {
+  it('pairs the lists into processes', () => {
+    expect(validateLists('0 2', '5, 3')).toEqual({
+      processes: [
+        { pid: 1, arrival: 0, burst: 5 },
+        { pid: 2, arrival: 2, burst: 3 },
+      ],
+      errors: { arrival: [], burst: [], general: [] },
+    })
+  })
+
+  it('asks for both lists when empty', () => {
+    expect(validateLists('', ' ').errors).toEqual({
+      arrival: ['Enter at least one arrival time.'],
+      burst: ['Enter at least one burst time.'],
+      general: [],
+    })
+  })
+
+  it('reports mismatched counts once', () => {
+    const { processes, errors } = validateLists('0 1 2 3', '5 3 1')
+    expect(processes).toBeNull()
+    expect(errors.general).toEqual(['You entered 4 arrival times but 3 burst times.'])
+    expect(validateLists('0', '1 2').errors.general).toEqual(['You entered 1 arrival time but 2 burst times.'])
+  })
+
+  it('reports each bad value with its position', () => {
+    expect(validateLists('0 -1 x', '0 2.5 1001').errors).toEqual({
+      arrival: ['Arrival time #2 cannot be negative.', 'Arrival time #3 must be a whole number.'],
+      burst: [
+        'Burst time #1 must be at least 1.',
+        'Burst time #2 must be a whole number.',
+        'Burst time #3 must be at most 1000.',
+      ],
+      general: [],
+    })
+  })
+
+  it('rejects more than 10 processes', () => {
+    const eleven = Array(11).fill('1').join(' ')
+    expect(validateLists(eleven, eleven).errors.general).toEqual(['Enter between 1 and 10 processes.'])
   })
 })

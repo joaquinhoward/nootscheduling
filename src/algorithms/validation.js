@@ -64,3 +64,62 @@ export function validateQuantum(raw) {
   const { value, error } = checkField(raw, 'Time Quantum', 1, 'Time Quantum must be at least 1.')
   return error ? { quantum: null, error } : { quantum: value, error: null }
 }
+
+/**
+ * Splits a list like "0, 2  4,6" into ["0", "2", "4", "6"].
+ * @param {string} text
+ */
+export function splitList(text) {
+  return String(text ?? '')
+    .split(/[\s,]+/)
+    .filter(Boolean)
+}
+
+const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`
+
+/**
+ * Turns "Arrival times" and "Burst times" lists into processes. Value i of each
+ * list becomes process P(i). Errors are grouped by the field they belong to.
+ *
+ * @param {string} arrivalText
+ * @param {string} burstText
+ * @returns {{
+ *   processes: { pid: number, arrival: number, burst: number }[] | null,
+ *   errors: { arrival: string[], burst: string[], general: string[] }
+ * }}
+ */
+export function validateLists(arrivalText, burstText) {
+  const arrivals = splitList(arrivalText)
+  const bursts = splitList(burstText)
+  const errors = { arrival: [], burst: [], general: [] }
+
+  if (arrivals.length === 0) errors.arrival.push('Enter at least one arrival time.')
+  if (bursts.length === 0) errors.burst.push('Enter at least one burst time.')
+
+  if (Math.max(arrivals.length, bursts.length) > MAX_PROCESSES) {
+    errors.general.push(`Enter between ${MIN_PROCESSES} and ${MAX_PROCESSES} processes.`)
+  } else if (arrivals.length > 0 && bursts.length > 0 && arrivals.length !== bursts.length) {
+    errors.general.push(
+      `You entered ${plural(arrivals.length, 'arrival time')} but ${plural(bursts.length, 'burst time')}.`,
+    )
+  }
+
+  const arrivalValues = arrivals.map((raw, i) => {
+    const label = `Arrival time #${i + 1}`
+    const { value, error } = checkField(raw, label, 0, `${label} cannot be negative.`)
+    if (error) errors.arrival.push(error)
+    return value
+  })
+  const burstValues = bursts.map((raw, i) => {
+    const label = `Burst time #${i + 1}`
+    const { value, error } = checkField(raw, label, 1, `${label} must be at least 1.`)
+    if (error) errors.burst.push(error)
+    return value
+  })
+
+  const hasErrors = errors.arrival.length + errors.burst.length + errors.general.length > 0
+  if (hasErrors) return { processes: null, errors }
+
+  const processes = arrivalValues.map((arrival, i) => ({ pid: i + 1, arrival, burst: burstValues[i] }))
+  return { processes, errors }
+}
