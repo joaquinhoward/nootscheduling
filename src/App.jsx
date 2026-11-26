@@ -11,6 +11,7 @@ import StatCards from './components/StatCards.jsx'
 import PlaybackBar from './components/PlaybackBar.jsx'
 import GanttChart from './components/GanttChart.jsx'
 import ResultsTable from './components/ResultsTable.jsx'
+import ThemeToggle from './components/ThemeToggle.jsx'
 import './App.css'
 
 // Test page for FCFS and Round Robin. The shared UI may replace it.
@@ -100,11 +101,14 @@ export default function App() {
   return (
     <div className="page">
       <header className="page-header">
-        <p className="eyebrow">CS 3104N · Operating Systems</p>
-        <h1>CPU Scheduling Simulator</h1>
-        <p className="lead">
-          Enter your processes, pick an algorithm, and watch the schedule play out step by step.
-        </p>
+        <div>
+          <p className="eyebrow">CS 3104N · Operating Systems</p>
+          <h1>CPU Scheduling Simulator</h1>
+          <p className="lead">
+            Enter your processes, pick an algorithm, and watch the schedule play out step by step.
+          </p>
+        </div>
+        <ThemeToggle />
       </header>
 
       <div className="layout">

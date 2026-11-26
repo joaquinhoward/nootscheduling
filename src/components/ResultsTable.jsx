@@ -26,7 +26,7 @@ export default function ResultsTable({ results, averages, time, complete }) {
             return (
               <tr key={r.pid} className={done ? '' : 'row-pending'}>
                 <th scope="row">
-                  <span className="swatch" style={{ background: processColor(r.pid).border }} />P{r.pid}
+                  <span className="swatch" style={{ background: processColor(r.pid) }} />P{r.pid}
                 </th>
                 <td>{r.arrival}</td>
                 <td>{r.burst}</td>

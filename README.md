@@ -79,3 +79,5 @@ Formulas: Turnaround = Completion − Arrival, Waiting = Turnaround − Burst, R
 - Errors appear under the field they belong to.
 - After a run, **Play**, **Prev**, **Next** and the slider step through the Gantt chart one block at a time. The
   results table fills in as each process finishes, and the averages appear at the last step.
+- The sun/moon button in the top right switches between light and dark mode. The page follows the system setting
+  until you pick one, then remembers your choice.

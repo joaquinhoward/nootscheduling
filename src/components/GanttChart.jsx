@@ -39,11 +39,11 @@ export default function GanttChart({ gantt, step }) {
           const isIdle = block.pid === 'Idle'
           const reached = index < step
           const isCurrent = index === step - 1
-          const color = isIdle ? null : processColor(block.pid)
           const name = isIdle ? 'Idle' : `P${block.pid}`
           const classes = [
             'gantt-block',
             isIdle && 'gantt-idle',
+            reached && !isIdle && 'gantt-reached',
             !reached && 'gantt-pending',
             isCurrent && 'gantt-current',
           ]
@@ -57,7 +57,7 @@ export default function GanttChart({ gantt, step }) {
               className={classes}
               style={{
                 flexGrow: block.end - block.start,
-                ...(color && reached ? { background: color.fill, borderColor: color.border } : {}),
+                ...(isIdle ? {} : { '--accent': processColor(block.pid) }),
               }}
               title={`${name}: ${block.start} to ${block.end}`}
             >
