@@ -30,4 +30,12 @@ describe('computeMetrics', () => {
     ])
     expect(averages).toEqual({ turnaround: 7.5, waiting: 3.5, response: 1 })
   })
+
+  it('handles a very long timeline without overflowing the call stack', () => {
+    const slices = 200000
+    const gantt = Array.from({ length: slices }, (_, i) => ({ pid: 1, start: i, end: i + 1 }))
+    const { results } = computeMetrics([{ pid: 1, arrival: 0, burst: slices }], gantt)
+    expect(results[0].completion).toBe(slices)
+    expect(results[0].response).toBe(0)
+  })
 })

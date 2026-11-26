@@ -18,9 +18,14 @@ export function computeMetrics(processes, gantt) {
   const results = [...processes]
     .sort((a, b) => a.pid - b.pid)
     .map(({ pid, arrival, burst }) => {
-      const blocks = gantt.filter((block) => block.pid === pid)
-      const firstStart = Math.min(...blocks.map((block) => block.start))
-      const completion = Math.max(...blocks.map((block) => block.end))
+      // A loop instead of Math.min(...spread): long timelines would overflow the call stack.
+      let firstStart = Infinity
+      let completion = -Infinity
+      for (const block of gantt) {
+        if (block.pid !== pid) continue
+        firstStart = Math.min(firstStart, block.start)
+        completion = Math.max(completion, block.end)
+      }
       const turnaround = completion - arrival // TAT = CT - AT
       const waiting = turnaround - burst // WT = TAT - BT
       const response = firstStart - arrival // RT = first start - AT

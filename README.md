@@ -63,8 +63,8 @@ export function myAlgorithm(processes) {
 }
 ```
 
-Input validation (1–10 processes, Arrival Time ≥ 0, Burst Time ≥ 1, whole numbers) is in
-`src/algorithms/validation.js`.
+Input validation (1–10 processes, Arrival Time ≥ 0, Burst Time ≥ 1, Time Quantum ≥ 1, whole numbers, every value at
+most 1000 so huge inputs cannot freeze the page) is in `src/algorithms/validation.js`.
 
 Formulas: Turnaround = Completion − Arrival, Waiting = Turnaround − Burst, Response = First start − Arrival.
 

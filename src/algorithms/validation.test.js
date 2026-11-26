@@ -44,7 +44,31 @@ describe('validateProcesses', () => {
   })
 })
 
+describe('validateProcesses upper limit', () => {
+  it('accepts values up to 1000', () => {
+    expect(validateProcesses([{ arrival: '1000', burst: '1000' }]).errors).toEqual([])
+  })
+
+  it('rejects values above 1000, including numbers too big to represent', () => {
+    expect(
+      validateProcesses([
+        { arrival: '1001', burst: '1001' },
+        { arrival: '9'.repeat(400), burst: '99999999999999999999' },
+      ]).errors,
+    ).toEqual([
+      'P1: Arrival Time must be at most 1000.',
+      'P1: Burst Time must be at most 1000.',
+      'P2: Arrival Time must be at most 1000.',
+      'P2: Burst Time must be at most 1000.',
+    ])
+  })
+})
+
 describe('validateQuantum', () => {
+  it('rejects a quantum above 1000', () => {
+    expect(validateQuantum('1001')).toEqual({ quantum: null, error: 'Time Quantum must be at most 1000.' })
+  })
+
   it('accepts a whole number of at least 1', () => {
     expect(validateQuantum(' 2 ')).toEqual({ quantum: 2, error: null })
   })

@@ -3,10 +3,14 @@
  *
  * Rules (project template): 1 to 10 processes, Arrival Time a whole number >= 0,
  * Burst Time a whole number >= 1, Time Quantum a whole number >= 1.
+ *
+ * Every value is also capped at MAX_VALUE so huge inputs get an error message
+ * instead of freezing the page (e.g. Round Robin with quantum 1 and a giant burst).
  */
 
 export const MIN_PROCESSES = 1
 export const MAX_PROCESSES = 10
+export const MAX_VALUE = 1000
 
 const WHOLE_NUMBER = /^-?\d+$/
 
@@ -26,6 +30,7 @@ function checkField(raw, label, min, belowMinMessage) {
   if (problem === 'required') return { error: `${label} is required.` }
   if (problem === 'whole') return { error: `${label} must be a whole number.` }
   if (value < min) return { error: belowMinMessage }
+  if (value > MAX_VALUE) return { error: `${label} must be at most ${MAX_VALUE}.` }
   return { value }
 }
 
